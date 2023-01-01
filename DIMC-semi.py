@@ -59,7 +59,7 @@ def train_DIC(mul_X, mul_X_val, WE,WE_val,yv_label, device,args):
     model = DIMCNet(
         n_stacks=4,
         n_input=args.n_input,
-        n_z=args.Nlabel,
+        n_z=256,
         Nlabel=args.Nlabel).to(device)
 
     for m in model.modules():
