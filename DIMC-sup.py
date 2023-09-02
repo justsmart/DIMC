@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
                 if (args.lrkl,args.alpha) in existed_params:
                     print('existed param! lr:{} alpha:{}'.format(args.lrkl,args.alpha))
-                    # continue
+                    continue
                 print(args)
                 hm_loss = np.zeros(Pre_fnum)
                 one_error = np.zeros(Pre_fnum)
@@ -190,7 +190,7 @@ if __name__ == "__main__":
                     
                     ind_00_val = np.array(np.where(abs(yv_label).sum(1) == 0)).reshape(-1)
                     ind_00_test = np.array(np.where(abs(yrt_label).sum(1) == 0)).reshape(-1)
-                    
+
                     model, value_result,all_results = train_DIMC(mul_X_train, mul_X_val,WE_train,WE_val,train_label,yv_label,ind_00_val,train_obrT, device,args)
                     # np.save(args.dataset+'_V_'+str(args.MaskRatios)+'_L_'+str(args.LabelMaskRatio)+'_'+str(fnum)+'.npy', np.array(all_results))
                     yp_prob = test_DIMC(model,mul_X_test,WE_test,args,device)
