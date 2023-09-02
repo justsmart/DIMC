@@ -54,7 +54,7 @@ def do_metric(y_prob, label):
     return np.array([hamming_loss, one_error, coverage, ranking_loss, precision, auc, auc_me, macro_f1, micro_f1])
 
 
-def train_DIC(mul_X, mul_X_val, WE,WE_val,yv_label, device,args):
+def train_DIMC(mul_X, mul_X_val, WE,WE_val,yv_label, device,args):
     # return None, torch.randn(9, 1)
     model = DIMCNet(
         n_stacks=4,
@@ -117,7 +117,7 @@ def train_DIC(mul_X, mul_X_val, WE,WE_val,yv_label, device,args):
             fusion_loss.backward()
             optimizer.step()
         # scheduler.step()
-        yp_prob = test_DIC(model, mul_X_val, WE_val, args, device)
+        yp_prob = test_DIMC(model, mul_X_val, WE_val, args, device)
         # yp_prob = np.delete(yp_prob, ind_00, axis=0)
 
         value_result = do_metric(yp_prob, yv_label)
@@ -143,7 +143,7 @@ def train_DIC(mul_X, mul_X_val, WE,WE_val,yv_label, device,args):
     return best_train_model, best_value_result,ap_loss
 
 
-def test_DIC(model, mul_X_test, WE_test, args, device):
+def test_DIMC(model, mul_X_test, WE_test, args, device):
     model.eval()
     num_X_test = mul_X_test[0].shape[0]
     tmp_q = torch.zeros([num_X_test, args.Nlabel]).to(device)
@@ -324,8 +324,8 @@ if __name__ == "__main__":
                             # ind_00 = np.array(np.where(clum == 0)).reshape(-1)
                             # yrt_label = np.delete(yrt_label, ind_00, axis=0)
 
-                            model, _,ap_loss = train_DIC(mul_X, mul_X_val, WE, WE_val, yv_label, device,args)
-                            yp_prob = test_DIC(model, mul_X_rtest, WE_rtest, args, device)
+                            model, _,ap_loss = train_DIMC(mul_X, mul_X_val, WE, WE_val, yv_label, device,args)
+                            yp_prob = test_DIMC(model, mul_X_rtest, WE_rtest, args, device)
                             #test in the test set
                             # yp_prob = np.delete(yp_prob, ind_00, axis=0)
                             value_result = do_metric(yp_prob, yrt_label)
