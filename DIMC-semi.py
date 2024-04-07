@@ -33,25 +33,6 @@ def wmse_loss(input, target, weight, reduction='mean'):
     return ret
 
 
-def do_metric(y_prob, label):
-    y_predict = y_prob > 0.5
-    ranking_loss = 1 - compute_ranking_loss(y_prob, label)
-    # print(ranking_loss)
-    one_error = compute_one_error(y_prob, label)
-    # print(one_error)
-    coverage = compute_coverage(y_prob, label)
-    # print(coverage)
-    hamming_loss = 1 - compute_hamming_loss(y_predict, label)
-    # print(hamming_loss)
-    precision = compute_average_precision(y_prob, label)
-    # print(precision)
-    macro_f1 = compute_macro_f1(y_predict, label)
-    # print(macro_f1)
-    micro_f1 = compute_micro_f1(y_predict, label)
-    # print(micro_f1)
-    auc = compute_auc(y_prob, label)
-    auc_me = mlc_auc(y_prob, label)
-    return np.array([hamming_loss, one_error, coverage, ranking_loss, precision, auc, auc_me, macro_f1, micro_f1])
 
 
 def train_DIMC(mul_X, mul_X_val, WE,WE_val,yv_label, device,args):
@@ -323,7 +304,7 @@ if __name__ == "__main__":
                             # clum = abs(yrt_label).sum(1)
                             # ind_00 = np.array(np.where(clum == 0)).reshape(-1)
                             # yrt_label = np.delete(yrt_label, ind_00, axis=0)
-
+                            print('train_num',mul_X[0].shape[0])
                             model, _,ap_loss = train_DIMC(mul_X, mul_X_val, WE, WE_val, yv_label, device,args)
                             yp_prob = test_DIMC(model, mul_X_rtest, WE_rtest, args, device)
                             #test in the test set

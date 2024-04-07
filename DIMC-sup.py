@@ -58,7 +58,7 @@ if __name__ == "__main__":
     parser.add_argument('--maxiter', default=300, type=int)
     parser.add_argument('--batch_size', default=128, type=int)
     parser.add_argument('--dataset', type=str, default='corel5k'+'_six_view')
-    parser.add_argument('--dataPath', type=str, default='/disk/MATLAB-NOUPLOAD/MyMVML-data/corel5k')
+    parser.add_argument('--dataPath', type=str, default='./data/corel5k')
     parser.add_argument('--n_z', default=256, type=int)
     # parser.add_argument('--pretrain_path_basis', type=str, default='pascal07/mirflickr')
     parser.add_argument('--MaskRatios', type=float, default=0.5)
@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
     args.cuda = torch.cuda.is_available()
     print("use cuda: {}".format(args.cuda))
-    file_path = 'results-sup/DIMC-sup-' + args.dataset + '_nz_' + str(args.n_z) + '_VMR_' + str(
+    file_path = './DIMC-sup-' + args.dataset + '_nz_' + str(args.n_z) + '_VMR_' + str(
         args.MaskRatios) + '_LMR_' + str(args.LabelMaskRatio) + '_TR_' + str(
         args.TraindataRatio) + '-best_AP' + '.txt'
     existed_params = filterparam(file_path)
@@ -136,6 +136,7 @@ if __name__ == "__main__":
                     val_num = math.ceil(remain_num*0.5)
                     # test_index = indexperm[0, train_num:indexperm.shape[1]] - 1
                     print('val_num',val_num)
+                    print('train_num',train_num)
                     # print('remain_index',len(test_index))
                     val_index = indexperm[0, train_num:train_num+val_num] - 1
                     
@@ -193,9 +194,9 @@ if __name__ == "__main__":
 
                     model, value_result,all_results = train_DIMC(mul_X_train, mul_X_val,WE_train,WE_val,train_label,yv_label,ind_00_val,train_obrT, device,args)
                     # np.save(args.dataset+'_V_'+str(args.MaskRatios)+'_L_'+str(args.LabelMaskRatio)+'_'+str(fnum)+'.npy', np.array(all_results))
-                    yp_prob = test_DIMC(model,mul_X_test,WE_test,args,device)
-                    yp_prob = np.delete(yp_prob,ind_00_test,axis=0)
-                    value_result = do_metric(yp_prob,yt_label)
+                    yp_prob = test_DIMC(model,mul_X_rtest,WE_rtest,args,device)
+                    # yp_prob = np.delete(yp_prob,ind_00_test,axis=0)
+                    value_result = do_metric(yp_prob,yrt_label)
                     print(
                         "final:hamming-loss" + ' ' + "one-error" + ' ' + "coverage" + ' ' + "ranking-loss" + ' ' + "average-precision" + ' ' + "macro-auc" + ' ' + "auc_me" + ' ' + "macro_f1" + ' ' + "micro_f1")
                     print(value_result)
@@ -211,7 +212,7 @@ if __name__ == "__main__":
                     mic_f1[fnum] = value_result[8]
                 if AP_score.mean() > best_AP:
                     best_AP = AP_score.mean()
-
+                
                 file_handle = open(file_path, mode='a')
                 if os.path.getsize(file_path) == 0:
                     file_handle.write(
